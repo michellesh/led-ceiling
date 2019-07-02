@@ -1,4 +1,4 @@
-const cushion = 10;
+const cushion = 20;
 const ledRadius = 1;
 const rippleWidth = 50;
 const leds = ledGrid({ cushion, ledRadius });
@@ -12,6 +12,10 @@ const donut = (x, y, r) => {
   leds.forEach(row => {
     row.forEach(p => {
       d = distance(p.x, p.y, x, y);
+      // stop drawing the circle once it gets pretty big
+      if (d > RADIUS * 1.5) {
+        return;
+      }
       // The point is inside the circle if the distance from it to the center is at most r
       if (d < r && d > (r - rippleWidth)) {
         const prominence = r - d;
@@ -30,15 +34,20 @@ const donut = (x, y, r) => {
   });
 };
 
-const ripple = (x, y) => {
-  let r = 0;
-  let interval = setInterval(() => {
-    if (r > RADIUS * 2) {
-      clearInterval(interval);
-    }
-    r += 10;
-    donut(x, y, r);
-  }, 100)
-};
+for (let i = 0, p = Promise.resolve(); i < 10; i++) {
+  p = p.then(() => new Promise(resolve =>{
+    const randomY = random(0, leds.length);
+    const randomX = random(0, leds[randomY].length);
+    const point = leds[randomY][randomX];
 
-ripple(400, 250);
+    let r = 0;
+    let interval = setInterval(() => {
+      if (r > RADIUS * 2) {
+        clearInterval(interval);
+        resolve();
+      }
+      r += 10;
+      donut(point.x, point.y, r);
+    }, 100);
+  }));
+}
