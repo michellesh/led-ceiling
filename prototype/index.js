@@ -2,9 +2,9 @@ const SVG_WIDTH = 700;
 const SVG_HEIGHT = 700;
 const RADIUS = SVG_WIDTH / 2;
 
-const colorScale = d3.scaleLinear().domain([0, 10]).range(['#ffffff', '#0000ff'])
+let colorScale = d3.scaleLinear().domain([0, 10]).range(['#ffffff', '#0000ff'])
 
-const random = (small = 0, big = 10) =>
+let random = (small = 0, big = 10) =>
   small + Math.floor(Math.random() * (big - small));
 
 const distance = (x1, y1, x2, y2) =>
@@ -33,7 +33,14 @@ const ledGrid = ({ cushion = 10, ledRadius = 1 } = {}) => {
     leds.push([]);
     ys.forEach((y, col) => {
       if (distance(x, y, RADIUS, RADIUS) < RADIUS) {
-        leds[row].push({ x, y, circle: circle(x, y, ledRadius, 'blue') });
+        leds[row].push({
+          circle: circle(x, y, ledRadius, 'blue'),
+          color: 'blue',
+          position: 0,
+          velocity: 0,
+          x,
+          y,
+        });
         ledCount++;
       }
     });
