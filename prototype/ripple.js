@@ -1,14 +1,11 @@
-const cushion = 20;
-const ledRadius = 1;
 const rippleWidth = 50;
-const leds = ledGrid({ cushion, ledRadius });
 
 const increaseRadius = d3.scaleLinear().domain([0, rippleWidth]).range([2, 5]);
 const decreaseRadius = d3.scaleLinear().domain([0, rippleWidth]).range([5, 2]);
 const increaseColor = d3.scaleLinear().domain([0, rippleWidth]).range(['blue', 'white']);
 const decreaseColor = d3.scaleLinear().domain([0, rippleWidth]).range(['white', 'blue']);
 
-const donut = (x, y, r) => {
+const donut = (leds, x, y, r) => {
   leds.forEach(row => {
     row.forEach(p => {
       d = distance(p.x, p.y, x, y);
@@ -34,20 +31,22 @@ const donut = (x, y, r) => {
   });
 };
 
-for (let i = 0, p = Promise.resolve(); i < 10; i++) {
-  p = p.then(() => new Promise(resolve =>{
-    const randomY = random(0, leds.length);
-    const randomX = random(0, leds[randomY].length);
-    const point = leds[randomY][randomX];
+const ripple = (leds, count = 10) => {
+  for (let i = 0, p = Promise.resolve(); i < count; i++) {
+    p = p.then(() => new Promise(resolve =>{
+      const randomY = random(0, leds.length);
+      const randomX = random(0, leds[randomY].length);
+      const point = leds[randomY][randomX];
 
-    let r = 0;
-    let interval = setInterval(() => {
-      if (r > RADIUS * 2) {
-        clearInterval(interval);
-        resolve();
-      }
-      r += 10;
-      donut(point.x, point.y, r);
-    }, 100);
-  }));
-}
+      let r = 0;
+      let interval = setInterval(() => {
+        if (r > RADIUS * 2) {
+          clearInterval(interval);
+          resolve();
+        }
+        r += 10;
+        donut(leds, point.x, point.y, r);
+      }, 100);
+    }));
+  }
+};

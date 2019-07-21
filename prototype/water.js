@@ -1,7 +1,3 @@
-const cushion = 20;
-const ledRadius = 1;
-const leds = ledGrid({ cushion, ledRadius });
-
 const TENSION = 55.0; // the tension in the strings
 const SPACING = 10.0; // the distance between masses on the string
 const MASS = 0.005; // the mass of each pixel
@@ -15,8 +11,6 @@ colorScale = d3.scaleLinear()
   .domain([0, NUM_COLORS])
   .range(['#0000ff', '#ffffff']);
 
-random = (small = 0, big = 10) => small + Math.random() * (big - small);
-
 const avg = arr => arr.reduce((acc, n) => acc + n, 0) / arr.length;
 
 const map = (x, inMin, inMax, outMin, outMax) =>
@@ -24,26 +18,17 @@ const map = (x, inMin, inMax, outMin, outMax) =>
 
 let damping, force, colorIndex, brightnesses = [];
 
-const waterRandom = () => {
-  leds.forEach((strand, row) => {
-    strand.forEach((p, col) => {
-      const n = random(0, NUM_COLORS);
-      p.circle.attr('fill', colorScale(n));
-      p.circle.attr('r', n / NUM_COLORS * 2.5);
-    });
-  });
-};
-
 // start with random positions
-const init = () => {
+const init = leds => {
+  randomPosition = () => MIN_POSITION + Math.random() * (MAX_POSITION - MIN_POSITION);
   leds.forEach((strand, row) => {
     strand.forEach((p, col) => {
-      p.position = random(MIN_POSITION, MAX_POSITION);
+      p.position = randomPosition();
     });
   });
 };
 
-const water = time => {
+const waterOnce = (leds, time) => {
   leds.forEach((strand, row) => {
     strand.forEach((p, col) => {
       // calculate the force on this point based on its and its neighbors positions
@@ -94,17 +79,18 @@ const water = time => {
   });
 }
 
-init();
-let time = 0;
-const intervalId = setInterval(() => {
-  brightnesses = [];
-  if (time === 0) {
-    //clearInterval(intervalId);
-  }
-  water(time);
-  //waterRandom();
+const water = leds => {
+  init(leds);
+  let time = 0;
+  const intervalId = setInterval(() => {
+    brightnesses = [];
+    if (time === 0) {
+      //clearInterval(intervalId);
+    }
+    waterOnce(leds, time);
 
-  //console.log('average brightness', avg(brightnesses) * 100);
+    //console.log('average brightness', avg(brightnesses) * 100);
 
-  time++;
-},100);
+    time++;
+  }, 100);
+};
