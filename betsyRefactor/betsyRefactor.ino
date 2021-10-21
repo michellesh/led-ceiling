@@ -1,7 +1,9 @@
 #include <FastLED.h>
 
 #include "utils.h"
+#include "Timer.h"
 #include "Spiral.h"
+#include "Paintbrush.h"
 
 void setup() {
   Serial.begin(9600);
@@ -37,11 +39,22 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 52>(leds[26], 7, 17);  // row 26, 17 leds
 }
 
-void loop() {
-  playSpirals();
+void paint() {
+  Paintbrush paintbrush;
+  paintbrush.withHue(HUE_BLUE).withSpeed(0.6).play(minutes(1));
+  delay(2000);
 }
 
-void playSpirals() {
+void loop() {
+  paint();
+  //hourLoop();
+}
+
+void hourLoop() {
+  spirals();
+}
+
+void spirals() {
   Spiral spiral;
   for (int density = 0; density <= 6; density++) {
     spiral.withDensity(density).directionInward().play(2);
