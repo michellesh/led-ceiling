@@ -48,11 +48,14 @@ void loop() {
 void paint() {
   Paintbrush paintbrush;
 
+  // TODO how come new brushes still start at the top?
+
   // Paint the canvas blue
-  paintbrush.color(CHSV_BLUE, CHSV_DODGERBLUE).play(minutes(1));
+  //paintbrush.color(CHSV_BLUE, CHSV_DODGERBLUE).play(minutes(1));
+  paintbrush.color(CHSV_BLUE, CHSV_BLUE).speed(0.5).play(seconds(30));
 
   // Paint over the blue with yellow, blend to green
-  //paintbrush.color(CHSV_YELLOW, CHSV_GOLD).blend().play(minutes(3));
+  paintbrush.color(CHSV_YELLOW, CHSV_YELLOW).blend().play(minutes(3));
 
   // Erase the canvas with black
   paintbrush.color(CHSV_GREEN).erase().play(minutes(3));

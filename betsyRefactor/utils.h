@@ -8,6 +8,7 @@
 #define RADIUS        16
 
 CRGB leds[NUM_ROWS][NUM_COLUMNS];
+CHSV ledsPrev[NUM_ROWS][NUM_COLUMNS];
 
 
 int leftBound[] = {7, 7, 6, 5, 5, 4, 4, 3, 3, 2, 1, 1, 0, 0,
@@ -120,7 +121,7 @@ px pxLinesIntersect(Line line1, Line line2) {
 void allBlack() {
   for (int row = 0; row < NUM_ROWS; row++) {
     for (int col = 0; col < NUM_COLUMNS; col++) {
-      leds[row][col] = CRGB::Black;
+      leds[row][col] = CHSV(0, 0, 0);
     }
   }
 }

@@ -96,19 +96,32 @@ struct Paintbrush {
     _targetEdge = minTargetEdge;
   }
 
-  float getMaxDistance() {
+  float getPercentFromCenter(px p) {
     px farthestPixel = {_center.row + _radius, _center.col + _radius};
-    return distance(_center, farthestPixel);
+    float maxDistance = distance(_center, farthestPixel);
+    return mapf(distance(p, _center), 0, maxDistance, 100, 0);
   }
 
   void showPaintbrush() {
-    for (int row = (_center.row - _radius); row <= (_center.row + _radius); row++) {
-      for (int col = (_center.col - _radius); col <= (_center.col + _radius); col++) {
+    for (int row = (_center.row - _radius); row < (_center.row + _radius + 1); row++) {
+      for (int col = (_center.col - _radius); col < (_center.col + _radius + 1); col++) {
         px p = {row, col};
         if (p.inBounds()) {
-          float percent = mapf(distance(p, _center), 0, getMaxDistance(), 100, 0);
+          // Find out how close this pixel is to the edge of the paintbrush
+          float percent = getPercentFromCenter(p);
+
+          // Pixels closer to the center should be closer to _color
+          // And farther away should be closer to _borderColor
           CHSV color = blendCHSV(_color, _borderColor, percent);
+
+          // Also make pixels farther away from center of paintbrush to be dimmer
           color.v = color.v * percent / 100;
+
+          // For pixels dimmer than 25%, blend those with the previous background color
+          if (percent < 25) {
+            color = blendCHSV(ledsPrev[p.rowInt()][p.colInt()], color);
+            ledsPrev[p.rowInt()][p.colInt()] = color;
+          }
           leds[p.rowInt()][p.colInt()] = color;
         }
       }

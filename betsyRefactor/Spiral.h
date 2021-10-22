@@ -27,12 +27,12 @@ struct Spiral {
   void play(int numTimes) {
     int offset;
     for (int n = 0; n < numTimes; n++) {
-      playSingleSpiral(CRGB::Blue, CRGB::White);
-      playSingleSpiral(CRGB::Black, CRGB::Black);
+      playSingleSpiral(CHSV_BLUE, CHSV_WHITE);
+      playSingleSpiral(CHSV_BLACK, CHSV_BLACK);
     }
   }
 
-  void playSingleSpiral(CRGB color1, CRGB color2) {
+  void playSingleSpiral(CHSV color1, CHSV color2) {
     int offset = 0;
     if (_direction == OUTWARD) {
       for(float radius = 0; radius < RADIUS; radius += 0.25) {
@@ -47,7 +47,7 @@ struct Spiral {
     }
   }
 
-  void showRays(float radius, int offset, CRGB color1, CRGB color2) {
+  void showRays(float radius, int offset, CHSV color1, CHSV color2) {
     for (int d = 0; d < _numRays; d++) {
       int deg = d * (360 / _numRays);
       px p = pointOnCircumference(radius, ORIGIN, deg + offset).getRounded(deg);
