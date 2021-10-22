@@ -51,7 +51,7 @@ void paint() {
     // Paint the canvas blue
     .color(CHSV_BLUE, CHSV_DODGERBLUE).play(seconds(30))
     // Paint over the blue with yellow
-    .color(CHSV_YELLOW, CHSV_YELLOW).play(minutes(3))
+    //.color(CHSV_YELLOW, CHSV_YELLOW).play(minutes(3))
     // Erase the canvas with black
     .color(CHSV_GREEN).erase().play(minutes(3))
     // Paint the canvas slowly with firey red/gold

@@ -5,15 +5,16 @@ struct Paintbrush {
   float _radius = 2;    // the width (size) of the paintbrush (in pixels)
   float _speed = 0.5;   // [0.05 - 1] how fast the paintbrush moves across canvas
   int _targetEdge = 2;  // index of target edge
+  bool _erase = false;
 
   px _center = pointOnLine(EDGES[0].p1, EDGES[0].p2, 0.5);  // location of paintbrush
   px _target = pointOnLine(EDGES[_targetEdge].p1, EDGES[_targetEdge].p2, 0.1);
   px _start = _center;
 
-  Paintbrush color(CHSV color, CHSV borderColor = CHSV(0, 0, 0)) {
+  Paintbrush color(CHSV color, CHSV borderColor = CHSV_BLACK) {
     Paintbrush p = *this;
     p._color = color;
-    p._borderColor = borderColor;
+    p._borderColor = borderColor == CHSV_BLACK ? color : borderColor;
     return p;
   }
 
@@ -25,7 +26,7 @@ struct Paintbrush {
 
   Paintbrush erase() {
     Paintbrush p = *this;
-    p._borderColor = CHSV_BLACK;
+    p._erase = true;
     return p;
   }
 
@@ -118,7 +119,7 @@ struct Paintbrush {
             color = blendCHSV(ledsPrev[p.rowInt()][p.colInt()], color);
             ledsPrev[p.rowInt()][p.colInt()] = color;
           }
-          leds[p.rowInt()][p.colInt()] = color;
+          leds[p.rowInt()][p.colInt()] = (_erase && percent < 10) ? CHSV_BLACK : color;
         }
       }
     }
