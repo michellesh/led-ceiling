@@ -1,6 +1,7 @@
 #include <FastLED.h>
 
 #include "utils.h"
+#include "Colors.h"
 #include "Timer.h"
 #include "Spiral.h"
 #include "Paintbrush.h"
@@ -39,15 +40,31 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 52>(leds[26], 7, 17);  // row 26, 17 leds
 }
 
-void paint() {
-  Paintbrush paintbrush;
-  paintbrush.withHue(HUE_GREEN).withSpeed(0.6).play(minutes(1));
-  delay(2000);
+void loop() {
+  paint();
+  //hourLoop();
 }
 
-void loop() {
-  //paint();
-  hourLoop();
+void paint() {
+  Paintbrush paintbrush;
+
+  // Paint the canvas blue
+  paintbrush.color(CHSV_BLUE, CHSV_DODGERBLUE).play(minutes(1));
+
+  // Paint over the blue with yellow, blend to green
+  //paintbrush.color(CHSV_YELLOW, CHSV_GOLD).blend().play(minutes(3));
+
+  // Erase the canvas with black
+  paintbrush.color(CHSV_GREEN).erase().play(minutes(3));
+
+  // Paint the canvas slowly with firey red/gold
+  paintbrush.color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(minutes(3));
+
+  // Erase quickly
+  paintbrush.color(CHSV_RED, CHSV_YELLOW).erase().speed(10).play(minutes(1));
+
+  // Paint a rainbow
+  paintbrush.rainbow().speed(0.5).play(minutes(1));
 }
 
 void hourLoop() {

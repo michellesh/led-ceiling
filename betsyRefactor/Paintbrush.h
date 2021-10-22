@@ -1,21 +1,43 @@
 struct Paintbrush {
-  int _hue = HUE_BLUE;  // the color of the paintbrush
+  CHSV _color = CHSV(HUE_BLUE, 255, 255);  // color of the paintbrush
+  CHSV _borderColor = _color;              // color around edge of paintbrush
+
   float _radius = 2;    // the width (size) of the paintbrush (in pixels)
   float _speed = 0.5;   // [0.05 - 1] how fast the paintbrush moves across canvas
   int _targetEdge = 2;  // index of target edge
+
   px _center = pointOnLine(EDGES[0].p1, EDGES[0].p2, 0.5);  // location of paintbrush
   px _target = pointOnLine(EDGES[_targetEdge].p1, EDGES[_targetEdge].p2, 0.1);
   px _start = _center;
 
-  Paintbrush withHue(int hue) {
+  Paintbrush color(CHSV color, CHSV borderColor = CHSV(0, 0, 0)) {
     Paintbrush p = *this;
-    p._hue = hue;
+    p._color = color;
+    p._borderColor = borderColor;
     return p;
   }
 
-  Paintbrush withSpeed(float speed) {
+  Paintbrush speed(float speed) {
     Paintbrush p = *this;
     p._speed = speed;
+    return p;
+  }
+
+  Paintbrush blend() {
+    Paintbrush p = *this;
+    // TODO
+    return p;
+  }
+
+  Paintbrush erase() {
+    Paintbrush p = *this;
+    p._borderColor = CHSV_BLACK;
+    return p;
+  }
+
+  Paintbrush rainbow() {
+    Paintbrush p = *this;
+    // TODO
     return p;
   }
 
@@ -84,8 +106,10 @@ struct Paintbrush {
       for (int col = (_center.col - _radius); col <= (_center.col + _radius); col++) {
         px p = {row, col};
         if (p.inBounds()) {
-          float brightness = mapf(distance(p, _center), 0, getMaxDistance(), 255, 0);
-          leds[p.rowInt()][p.colInt()] = CHSV(_hue, 255, (uint8_t)brightness);
+          float percent = mapf(distance(p, _center), 0, getMaxDistance(), 100, 0);
+          CHSV color = blendCHSV(_color, _borderColor, percent);
+          color.v = color.v * percent / 100;
+          leds[p.rowInt()][p.colInt()] = color;
         }
       }
     }
