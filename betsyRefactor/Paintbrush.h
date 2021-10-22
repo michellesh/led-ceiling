@@ -23,12 +23,6 @@ struct Paintbrush {
     return p;
   }
 
-  Paintbrush blend() {
-    Paintbrush p = *this;
-    // TODO
-    return p;
-  }
-
   Paintbrush erase() {
     Paintbrush p = *this;
     p._borderColor = CHSV_BLACK;
@@ -41,35 +35,37 @@ struct Paintbrush {
     return p;
   }
 
-  void play(unsigned long totalCycleTime) {
+  Paintbrush play(unsigned long totalCycleTime) {
     Timer timer = {totalCycleTime};
     timer.start();
 
     while (!timer.complete()) {
-      movePaintbrush();
-      showPaintbrush();
+      _movePaintbrush();
+      _showPaintbrush();
     }
+
+    return *this;
   }
 
-  void movePaintbrush() {
+  void _movePaintbrush() {
     float currentDist = distance(_start, _center);
     float totalDist = distance(_start, _target);
     if (currentDist < totalDist) {
-      _center = getNewCenter(currentDist, totalDist);
+      _center = _getNewCenter(currentDist, totalDist);
     } else {
       _center = _target;
-      setNewDestination();
+      _setNewDestination();
     }
   }
 
-  px getNewCenter(float currentDist, float totalDist) {
+  px _getNewCenter(float currentDist, float totalDist) {
     return {
       mapf(currentDist + _speed, 0, totalDist, _start.row, _target.row),
       mapf(currentDist + _speed, 0, totalDist, _start.col, _target.col)
     };
   }
 
-  void setNewDestination() {
+  void _setNewDestination() {
     // reflect starting point across target edge (line of intersection)
     px pxReflection = reflectPxOverLine(_start, EDGES[_targetEdge]);
     Line reflectionLine = {pxReflection, _target};
@@ -96,19 +92,19 @@ struct Paintbrush {
     _targetEdge = minTargetEdge;
   }
 
-  float getPercentFromCenter(px p) {
+  float _getPercentFromCenter(px p) {
     px farthestPixel = {_center.row + _radius, _center.col + _radius};
     float maxDistance = distance(_center, farthestPixel);
     return mapf(distance(p, _center), 0, maxDistance, 100, 0);
   }
 
-  void showPaintbrush() {
+  void _showPaintbrush() {
     for (int row = (_center.row - _radius); row < (_center.row + _radius + 1); row++) {
       for (int col = (_center.col - _radius); col < (_center.col + _radius + 1); col++) {
         px p = {row, col};
         if (p.inBounds()) {
           // Find out how close this pixel is to the edge of the paintbrush
-          float percent = getPercentFromCenter(p);
+          float percent = _getPercentFromCenter(p);
 
           // Pixels closer to the center should be closer to _color
           // And farther away should be closer to _borderColor

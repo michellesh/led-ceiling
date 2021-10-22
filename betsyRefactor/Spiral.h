@@ -24,30 +24,31 @@ struct Spiral {
     return s;
   }
 
-  void play(int numTimes) {
+  Spiral play(int numTimes) {
     int offset;
     for (int n = 0; n < numTimes; n++) {
-      playSingleSpiral(CHSV_BLUE, CHSV_WHITE);
-      playSingleSpiral(CHSV_BLACK, CHSV_BLACK);
+      _playSingleSpiral(CHSV_BLUE, CHSV_WHITE);
+      _playSingleSpiral(CHSV_BLACK, CHSV_BLACK);
     }
+    return *this;
   }
 
-  void playSingleSpiral(CHSV color1, CHSV color2) {
+  void _playSingleSpiral(CHSV color1, CHSV color2) {
     int offset = 0;
     if (_direction == OUTWARD) {
       for(float radius = 0; radius < RADIUS; radius += 0.25) {
-        showRays(radius, offset, color1, color2);
+        _showRays(radius, offset, color1, color2);
         offset += _density;
       }
     } else {
       for(float radius = RADIUS; radius >= 0; radius -= 0.25) {
-        showRays(radius, offset, color1, color2);
+        _showRays(radius, offset, color1, color2);
         offset += _density;
       }
     }
   }
 
-  void showRays(float radius, int offset, CHSV color1, CHSV color2) {
+  void _showRays(float radius, int offset, CHSV color1, CHSV color2) {
     for (int d = 0; d < _numRays; d++) {
       int deg = d * (360 / _numRays);
       px p = pointOnCircumference(radius, ORIGIN, deg + offset).getRounded(deg);

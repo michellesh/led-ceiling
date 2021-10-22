@@ -47,27 +47,19 @@ void loop() {
 
 void paint() {
   Paintbrush paintbrush;
-
-  // TODO how come new brushes still start at the top?
-
-  // Paint the canvas blue
-  //paintbrush.color(CHSV_BLUE, CHSV_DODGERBLUE).play(minutes(1));
-  paintbrush.color(CHSV_BLUE, CHSV_BLUE).speed(0.5).play(seconds(30));
-
-  // Paint over the blue with yellow, blend to green
-  paintbrush.color(CHSV_YELLOW, CHSV_YELLOW).blend().play(minutes(3));
-
-  // Erase the canvas with black
-  paintbrush.color(CHSV_GREEN).erase().play(minutes(3));
-
-  // Paint the canvas slowly with firey red/gold
-  paintbrush.color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(minutes(3));
-
-  // Erase quickly
-  paintbrush.color(CHSV_RED, CHSV_YELLOW).erase().speed(10).play(minutes(1));
-
-  // Paint a rainbow
-  paintbrush.rainbow().speed(0.5).play(minutes(1));
+  paintbrush
+    // Paint the canvas blue
+    .color(CHSV_BLUE, CHSV_DODGERBLUE).play(seconds(30))
+    // Paint over the blue with yellow
+    .color(CHSV_YELLOW, CHSV_YELLOW).play(minutes(3))
+    // Erase the canvas with black
+    .color(CHSV_GREEN).erase().play(minutes(3))
+    // Paint the canvas slowly with firey red/gold
+    .color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(minutes(3))
+    // Erase quickly
+    .color(CHSV_RED, CHSV_YELLOW).erase().speed(10).play(minutes(1))
+    // Paint a rainbow
+    .rainbow().speed(0.5).play(minutes(1));
 }
 
 void hourLoop() {
