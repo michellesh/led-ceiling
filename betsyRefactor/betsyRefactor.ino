@@ -49,17 +49,17 @@ void paint() {
   Paintbrush paintbrush;
   paintbrush
     // Paint the canvas blue
-    .color(CHSV_BLUE, CHSV_DODGERBLUE).play(seconds(30))
-    // Paint over the blue with yellow
-    //.color(CHSV_YELLOW, CHSV_YELLOW).play(minutes(3))
-    // Erase the canvas with black
-    .color(CHSV_GREEN).erase().play(minutes(3))
-    // Paint the canvas slowly with firey red/gold
-    .color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(minutes(3))
+    .color(CHSV_BLUE, CHSV_BLUE).play(seconds(15))
+    // Paint on blue canvas with yellow brush, blends to green
+    .color(CHSV_YELLOW, CHSV_YELLOW).play(seconds(15))
+    // Erase the canvas with a green brush
+    .color(CHSV_GREEN).eraser().play(seconds(15)).resetMode()
+    // Paint the canvas slowly with fireball red/gold
+    .color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(seconds(15))
     // Erase quickly
-    .color(CHSV_RED, CHSV_YELLOW).erase().speed(10).play(minutes(1))
+    .color(CHSV_RED, CHSV_YELLOW).eraser().speed(1).play(seconds(15))
     // Paint a rainbow
-    .rainbow().speed(0.5).play(minutes(1));
+    .color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4).play(seconds(15));
 }
 
 void hourLoop() {

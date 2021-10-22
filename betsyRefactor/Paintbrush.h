@@ -1,11 +1,19 @@
+int BRIGHTNESS_THRESHOLD_BACKGROUND = 5;
+int BRIGHTNESS_THRESHOLD_ERASER = 40;
+int BRIGHTNESS_THRESHOLD_RAINBOW = 20;
+
+int MODE_DEFAULT = 0;
+int MODE_ERASER = 1;
+int MODE_RAINBOW = 2;
+
 struct Paintbrush {
   CHSV _color = CHSV(HUE_BLUE, 255, 255);  // color of the paintbrush
   CHSV _borderColor = _color;              // color around edge of paintbrush
 
-  float _radius = 2;    // the width (size) of the paintbrush (in pixels)
+  float _radius = 2.5;  // the width (size) of the paintbrush (in pixels)
   float _speed = 0.5;   // [0.05 - 1] how fast the paintbrush moves across canvas
   int _targetEdge = 2;  // index of target edge
-  bool _erase = false;
+  int _mode = MODE_DEFAULT;
 
   px _center = pointOnLine(EDGES[0].p1, EDGES[0].p2, 0.5);  // location of paintbrush
   px _target = pointOnLine(EDGES[_targetEdge].p1, EDGES[_targetEdge].p2, 0.1);
@@ -24,15 +32,27 @@ struct Paintbrush {
     return p;
   }
 
-  Paintbrush erase() {
+  Paintbrush resetMode() {
     Paintbrush p = *this;
-    p._erase = true;
+    p._mode = MODE_DEFAULT;
+    return p;
+  }
+
+  Paintbrush eraser() {
+    Paintbrush p = *this;
+    p._mode = MODE_ERASER;
     return p;
   }
 
   Paintbrush rainbow() {
     Paintbrush p = *this;
-    // TODO
+    p._mode = MODE_RAINBOW;
+    return p;
+  }
+
+  Paintbrush radius(float radius) {
+    Paintbrush p = *this;
+    p._radius = radius;
     return p;
   }
 
@@ -93,36 +113,45 @@ struct Paintbrush {
     _targetEdge = minTargetEdge;
   }
 
-  float _getPercentFromCenter(px p) {
-    px farthestPixel = {_center.row + _radius, _center.col + _radius};
-    float maxDistance = distance(_center, farthestPixel);
-    return mapf(distance(p, _center), 0, maxDistance, 100, 0);
-  }
-
   void _showPaintbrush() {
     for (int row = (_center.row - _radius); row < (_center.row + _radius + 1); row++) {
       for (int col = (_center.col - _radius); col < (_center.col + _radius + 1); col++) {
         px p = {row, col};
-        if (p.inBounds()) {
-          // Find out how close this pixel is to the edge of the paintbrush
-          float percent = _getPercentFromCenter(p);
-
-          // Pixels closer to the center should be closer to _color
-          // And farther away should be closer to _borderColor
-          CHSV color = blendCHSV(_color, _borderColor, percent);
-
-          // Also make pixels farther away from center of paintbrush to be dimmer
-          color.v = color.v * percent / 100;
-
-          // For pixels dimmer than 25%, blend those with the previous background color
-          if (percent < 25) {
-            color = blendCHSV(ledsPrev[p.rowInt()][p.colInt()], color);
-            ledsPrev[p.rowInt()][p.colInt()] = color;
-          }
-          leds[p.rowInt()][p.colInt()] = (_erase && percent < 10) ? CHSV_BLACK : color;
+        if (p.inBounds() && distance(p, _center) <= _radius) {
+          leds[p.rowInt()][p.colInt()] = _getColor(p);
         }
       }
     }
     FastLED.show();
+  }
+
+  CHSV _getColor(px p) {
+    // Find out how close this pixel is to the edge of the paintbrush
+    float percent = mapf(distance(p, _center), 0, _radius, 100, 0);
+
+    // Pixels closer to the center should be closer to _color
+    // And farther away should be closer to _borderColor
+    CHSV color = blendCHSV(_color, _borderColor, percent);
+
+    // Also make pixels farther away from center of paintbrush dimmer
+    color.v = color.v * percent / 100;
+
+    // Blend dim pixels those with the previous background color
+    if (percent < BRIGHTNESS_THRESHOLD_BACKGROUND) {
+      color = blendCHSV(ledsPrev[p.rowInt()][p.colInt()], color);
+      ledsPrev[p.rowInt()][p.colInt()] = color;
+    }
+
+    // Rainbow mode trails behind random color
+    if (_mode == MODE_RAINBOW && percent < BRIGHTNESS_THRESHOLD_RAINBOW) {
+      int index = random(0, 7);
+      color = CHSV(RAINBOW[index].h, RAINBOW[index].s, color.v);
+    }
+
+    // Eraser mode sets lowest brightnesses to black
+    if (_mode == MODE_ERASER && percent < BRIGHTNESS_THRESHOLD_ERASER) {
+      color = CHSV_BLACK;
+    }
+    return color;
   }
 };
