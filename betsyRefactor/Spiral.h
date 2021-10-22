@@ -7,26 +7,20 @@ struct Spiral {
   int _numRays = 8;
 
   Spiral withDensity(int density) {
-    Spiral s;
+    Spiral s = *this;
     s._density = density;
-    s._direction = _direction;
-    s._numRays = _numRays;
     return s;
   }
 
   Spiral directionInward() {
-    Spiral s;
-    s._density = _density;
+    Spiral s = *this;
     s._direction = INWARD;
-    s._numRays = _numRays;
     return s;
   }
 
   Spiral directionOutward() {
-    Spiral s;
-    s._density = _density;
+    Spiral s = *this;
     s._direction = OUTWARD;
-    s._numRays = _numRays;
     return s;
   }
 

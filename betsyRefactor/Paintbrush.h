@@ -8,26 +8,14 @@ struct Paintbrush {
   px _start = _center;
 
   Paintbrush withHue(int hue) {
-    Paintbrush p;
+    Paintbrush p = *this;
     p._hue = hue;
-    p._speed = _speed;
-    p._radius = _radius;
-    p._center = _center;
-    p._target = p._target;
-    p._start = p._start;
-    p._targetEdge = p._targetEdge;
     return p;
   }
 
   Paintbrush withSpeed(float speed) {
-    Paintbrush p;
-    p._hue = _hue;
+    Paintbrush p = *this;
     p._speed = speed;
-    p._radius = _radius;
-    p._center = _center;
-    p._target = p._target;
-    p._start = p._start;
-    p._targetEdge = p._targetEdge;
     return p;
   }
 

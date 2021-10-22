@@ -41,13 +41,13 @@ void setup() {
 
 void paint() {
   Paintbrush paintbrush;
-  paintbrush.withHue(HUE_BLUE).withSpeed(0.6).play(minutes(1));
+  paintbrush.withHue(HUE_GREEN).withSpeed(0.6).play(minutes(1));
   delay(2000);
 }
 
 void loop() {
-  paint();
-  //hourLoop();
+  //paint();
+  hourLoop();
 }
 
 void hourLoop() {
