@@ -25,14 +25,17 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String str = Serial.readStringUntil('\n');
-    msg m = parseMsg(str);
-    Serial.print("buttonId: ");
-    Serial.println(m.buttonId);
-    Serial.print("buttonValue: ");
-    Serial.println(m.buttonValue);
+    Button button = parseButton(str);
+    Serial.print("button id: ");
+    Serial.println(button.id);
+    Serial.print("button value1: ");
+    Serial.println(button.value1);
+    Serial.print("button value2: ");
+    Serial.println(button.value2);
+    send(button);
   }
 }
 
-void send(msg m) {
-  esp_now_send(0, (uint8_t *) &m, sizeof(m));
+void send(Button b) {
+  esp_now_send(0, (uint8_t *) &b, sizeof(b));
 }
