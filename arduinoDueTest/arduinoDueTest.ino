@@ -1,39 +1,31 @@
 // Receives data from the receiver ESP8266
 
-//ESP8266 GND - Due GND
-//ESP8266 VCC - Due 3.3V
-//ESP8266 TX - Due RX3
-//ESP8266 RX - Due TX3
-//ESP8266 EN - Due pin 53 (always HIGH)
+// Connect RX pin (ESP) to 18/TX1 (Due)
+// Connect TX pin (ESP) to 19/RX1 (Due)
 
-//always high
-int EN_ESP8266 = 53;
-
+char c = 0;
 void setup() {
-  Serial.begin(9600);
-  Serial3.begin(9600);
-  pinMode(EN_ESP8266, OUTPUT);
-  digitalWrite(EN_ESP8266, HIGH);
+
+  Serial.begin(250000);
+  Serial1.begin(250000);
+  Serial2.begin(250000);
+
+  Serial2.print("Hello");
 }
 
-void loop() {
-  if (Serial3.available()) {
-    char a = Serial3.read();
-    Serial.write(a);
-  }
-}
-/*
-void loop() {
-  while (Serial.available() > 0) {
-    char a = Serial.read();
-    Serial3.write(a);
-  }
-}
 
-void serialEvent3() {
-  while (Serial3.available() > 0) {
-    char a = Serial3.read();
-    Serial.write(a);
+void loop() {
+  String s;
+  s = "";
+
+  while (Serial1.available() > 0) {
+    c = Serial1.read();
+    s += c;
+
   }
+  if (s.length() > 0) {
+    Serial.println(s);
+    Serial2.print(s);
+  }
+  delay(1000);
 }
-*/
