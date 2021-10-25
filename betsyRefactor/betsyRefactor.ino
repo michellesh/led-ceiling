@@ -61,6 +61,8 @@ void loop() {
     Serial.println(button.value1);
     Serial.print("value2: ");
     Serial.println(button.value2);
+  } else {
+    button = {-1}; // Set button status as inactive
   }
 
   hourLoop = hourLoop.play(button);

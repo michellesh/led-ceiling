@@ -1,3 +1,10 @@
+int incrementPattern(int activePattern, int numPatterns) {
+  if (activePattern < (numPatterns - 1)) {
+    return activePattern + 1;
+  }
+  return 0;
+}
+
 struct Loop { // really HourLoop
   int _activePattern = SPIRAL;
   int _activeSubPattern = 0;
@@ -11,7 +18,7 @@ struct Loop { // really HourLoop
   Timer _subPatternTimer = {seconds(15)};
 
   Loop start() {
-    _nextSubPattern = _setSubPattern();
+    _setNextSubPattern();
     _patternTimer.start();
     _subPatternTimer.start();
     return *this;
@@ -19,24 +26,21 @@ struct Loop { // really HourLoop
 
   Loop play(Button button) {
     if (button.id == N64_CDOWN && button.value1 == 1) {
-      _activeSubPattern = 0;
-      _nextPattern();
+      _setNextPattern();
     }
 
     if (button.id == N64_CRIGHT && button.value1 == 1) {
-      _activeSubPattern = _nextSubPattern;
-      _nextSubPattern = _setSubPattern();
+      _setNextSubPattern();
       _subPatternTimer.reset();
     }
 
     if (_patternTimer.complete()) {
-      _nextPattern();
+      _setNextPattern();
       _patternTimer.reset();
     }
 
     if (_subPatternTimer.complete()) {
-      _activeSubPattern = _nextSubPattern;
-      _nextSubPattern = _setSubPattern();
+      _setNextSubPattern();
       _subPatternTimer.reset();
     }
 
@@ -52,21 +56,21 @@ struct Loop { // really HourLoop
     return *this;
   }
 
-  void _nextPattern() {
-    if (_activePattern < _numPatterns) {
-      _activePattern++;
-    } else {
-      _activePattern = 0;
-    }
+  void _setNextPattern() {
+    _activePattern = incrementPattern(_activePattern, 2);
+    _nextSubPattern = 0;
+    _setNextSubPattern();
+    _subPatternTimer.reset();
   }
 
-  int _setSubPattern() {
+  void _setNextSubPattern() {
+    _activeSubPattern = _nextSubPattern;
     switch (_activePattern) {
       case SPIRAL:
         _spiral = _activeSubPattern < 6
                   ? _spiral.withDensity(_activeSubPattern % 6).directionInward().play()
                   : _spiral.withDensity(_activeSubPattern % 6).directionOutward().play();
-        return _activeSubPattern < 12 ? _activeSubPattern + 1 : 0;
+        _nextSubPattern = incrementPattern(_activeSubPattern, 12);
       case PAINTBRUSH:
         _paintbrush =
           _activeSubPattern == 0 ? _paintbrush.color(CHSV_BLUE, CHSV_BLUE) :
@@ -76,7 +80,7 @@ struct Loop { // really HourLoop
           _activeSubPattern == 4 ? _paintbrush.color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
                                    _paintbrush.color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
         _paintbrush = _paintbrush.play();
-        return _activeSubPattern < 6 ? _activeSubPattern + 1 : 0;
+        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
     }
   }
 };
