@@ -56,15 +56,9 @@ struct Paintbrush {
     return p;
   }
 
-  Paintbrush play(unsigned long totalCycleTime) {
-    Timer timer = {totalCycleTime};
-    timer.start();
-
-    while (!timer.complete()) {
-      _movePaintbrush();
-      _showPaintbrush();
-    }
-
+  Paintbrush play() {
+    _movePaintbrush();
+    _showPaintbrush();
     return *this;
   }
 

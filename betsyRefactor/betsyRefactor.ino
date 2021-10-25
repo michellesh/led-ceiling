@@ -1,3 +1,6 @@
+// Receives data from the receiver ESP8266
+// Connect RX pin (ESP) to 18/TX1 (Due)
+// Connect TX pin (ESP) to 19/RX1 (Due)
 #include <FastLED.h>
 
 #include "utils.h"
@@ -5,9 +8,22 @@
 #include "Timer.h"
 #include "Spiral.h"
 #include "Paintbrush.h"
+#include "BetsyShared.h"
+
+#define SPIRAL        0
+#define PAINTBRUSH    1
+#define NUM_PATTERNS  2
+
+int PATTERNS[] = {SPIRAL, PAINTBRUSH};
+int activePattern = SPIRAL;
+
+Timer timer = {minutes(1)};
+Paintbrush paintbrush;
+Spiral spiral;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial1.begin(115200);
 
   randomSeed(analogRead(0));
 
@@ -38,13 +54,55 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 50>(leds[24], 6, 19);  // row 24, 19 leds
   FastLED.addLeds<NEOPIXEL, 51>(leds[25], 7, 17);  // row 25, 17 leds
   FastLED.addLeds<NEOPIXEL, 52>(leds[26], 7, 17);  // row 26, 17 leds
+
+  timer.start();
 }
 
 void loop() {
-  paint();
+  if (Serial1.available()) {
+    String str = Serial1.readStringUntil('\n');
+    Button button = parseButton(str);
+    Serial.print("id: ");
+    Serial.println(button.id);
+    Serial.print("value1: ");
+    Serial.println(button.value1);
+    Serial.print("value2: ");
+    Serial.println(button.value2);
+    if (button.id == N64_CDOWN && button.value1 == 1) {
+      nextPattern();
+    }
+    if (button.id == N64_CRIGHT && button.value1 == 1) {
+      //nextSubPattern();
+    }
+  }
+
+
+  if (timer.complete()) {
+    nextPattern();
+    timer.reset();
+  }
+
+  switch (activePattern) {
+    case SPIRAL:
+      //spirals();
+      spiral = spiral.withDensity(2).directionInward().play();
+      break;
+    case PAINTBRUSH:
+      // Paint the canvas blue
+      paintbrush = paintbrush.color(CHSV_BLUE, CHSV_BLUE).play();
+      break;
+  }
+  //paint();
   //hourLoop();
 }
 
+void nextPattern() {
+  activePattern = activePattern >= (NUM_PATTERNS - 1) ? 0 : activePattern + 1;
+  Serial.print("next pattern is: ");
+  Serial.println(activePattern);
+}
+
+/*
 void paint() {
   Paintbrush paintbrush;
   paintbrush
@@ -61,9 +119,22 @@ void paint() {
     // Paint a rainbow
     .color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4).play(seconds(15));
 }
+*/
 
+/*
 void hourLoop() {
   spirals();
+}
+*/
+
+/*
+void spirals2(int activeSubPattern) {
+  for (int density = 0; density <= 6; density++) {
+    spiral.withDensity(density).directionInward().play(2);
+  }
+  for (int density = 0; density <= 6; density++) {
+    spiral.withDensity(density).directionOutward().play(2);
+  }
 }
 
 void spirals() {
@@ -75,3 +146,4 @@ void spirals() {
     spiral.withDensity(density).directionOutward().play(2);
   }
 }
+*/

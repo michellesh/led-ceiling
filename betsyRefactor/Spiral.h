@@ -2,9 +2,15 @@ int OUTWARD = 0;
 int INWARD = 1;
 
 struct Spiral {
-  int _density = 0;
-  int _direction = INWARD;
-  int _numRays = 8;
+  int _density = 0;          // How curly the spiral is
+  int _direction = OUTWARD;  // Does the spiral explode outward or implode inward
+  int _numRays = 8;          // Number of lines
+
+  float _radius = 0;         // how big the spiral is. advances as the spiral grows
+  bool _erasing = false;     // flag to alternate between drawing or erasing the spiral
+
+  CHSV _color1 = CHSV_BLUE;
+  CHSV _color2 = CHSV_WHITE;
 
   Spiral withDensity(int density) {
     Spiral s = *this;
@@ -24,35 +30,38 @@ struct Spiral {
     return s;
   }
 
-  Spiral play(int numTimes) {
-    int offset;
-    for (int n = 0; n < numTimes; n++) {
-      _playSingleSpiral(CHSV_BLUE, CHSV_WHITE);
-      _playSingleSpiral(CHSV_BLACK, CHSV_BLACK);
-    }
+  Spiral play() {
+    _showRays();
+    _updateRadius();
     return *this;
   }
 
-  void _playSingleSpiral(CHSV color1, CHSV color2) {
-    int offset = 0;
+  void _updateRadius() {
     if (_direction == OUTWARD) {
-      for(float radius = 0; radius < RADIUS; radius += 0.25) {
-        _showRays(radius, offset, color1, color2);
-        offset += _density;
+      if (_radius < RADIUS) {
+        _radius += 0.25;
+      } else {
+        _radius = 0;
+        _erasing = !_erasing;
       }
     } else {
-      for(float radius = RADIUS; radius >= 0; radius -= 0.25) {
-        _showRays(radius, offset, color1, color2);
-        offset += _density;
+      if (_radius >= 0) {
+        _radius -= 0.25;
+      } else {
+        _radius = RADIUS;
+        _erasing = !_erasing;
       }
     }
   }
 
-  void _showRays(float radius, int offset, CHSV color1, CHSV color2) {
+  void _showRays() {
     for (int d = 0; d < _numRays; d++) {
       int deg = d * (360 / _numRays);
-      px p = pointOnCircumference(radius, ORIGIN, deg + offset).getRounded(deg);
+      int offset = (_radius / 0.25) * _density;
+      px p = pointOnCircumference(_radius, ORIGIN, deg + offset).getRounded(deg);
       if (p.inBounds()) {
+        CHSV color1 = _erasing ? CHSV_BLACK : _color1;
+        CHSV color2 = _erasing ? CHSV_BLACK : _color2;
         leds[p.rowInt()][p.colInt()] = d % 2 == 0 ? color1 : color2;
       }
     }
