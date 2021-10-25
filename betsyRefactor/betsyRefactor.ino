@@ -9,17 +9,10 @@
 #include "Spiral.h"
 #include "Paintbrush.h"
 #include "BetsyShared.h"
+#include "Loop.h"
 
-#define SPIRAL        0
-#define PAINTBRUSH    1
-#define NUM_PATTERNS  2
-
-int PATTERNS[] = {SPIRAL, PAINTBRUSH};
-int activePattern = SPIRAL;
-
-Timer timer = {minutes(1)};
-Paintbrush paintbrush;
-Spiral spiral;
+Loop hourLoop;
+Button button;
 
 void setup() {
   Serial.begin(115200);
@@ -55,95 +48,20 @@ void setup() {
   FastLED.addLeds<NEOPIXEL, 51>(leds[25], 7, 17);  // row 25, 17 leds
   FastLED.addLeds<NEOPIXEL, 52>(leds[26], 7, 17);  // row 26, 17 leds
 
-  timer.start();
+  hourLoop = hourLoop.start();
 }
 
 void loop() {
   if (Serial1.available()) {
     String str = Serial1.readStringUntil('\n');
-    Button button = parseButton(str);
+    button = parseButton(str);
     Serial.print("id: ");
     Serial.println(button.id);
     Serial.print("value1: ");
     Serial.println(button.value1);
     Serial.print("value2: ");
     Serial.println(button.value2);
-    if (button.id == N64_CDOWN && button.value1 == 1) {
-      nextPattern();
-    }
-    if (button.id == N64_CRIGHT && button.value1 == 1) {
-      //nextSubPattern();
-    }
   }
 
-
-  if (timer.complete()) {
-    nextPattern();
-    timer.reset();
-  }
-
-  switch (activePattern) {
-    case SPIRAL:
-      //spirals();
-      spiral = spiral.withDensity(2).directionInward().play();
-      break;
-    case PAINTBRUSH:
-      // Paint the canvas blue
-      paintbrush = paintbrush.color(CHSV_BLUE, CHSV_BLUE).play();
-      break;
-  }
-  //paint();
-  //hourLoop();
+  hourLoop = hourLoop.play(button);
 }
-
-void nextPattern() {
-  activePattern = activePattern >= (NUM_PATTERNS - 1) ? 0 : activePattern + 1;
-  Serial.print("next pattern is: ");
-  Serial.println(activePattern);
-}
-
-/*
-void paint() {
-  Paintbrush paintbrush;
-  paintbrush
-    // Paint the canvas blue
-    .color(CHSV_BLUE, CHSV_BLUE).play(seconds(15))
-    // Paint on blue canvas with yellow brush, blends to green
-    .color(CHSV_YELLOW, CHSV_YELLOW).play(seconds(15))
-    // Erase the canvas with a green brush
-    .color(CHSV_GREEN).eraser().play(seconds(15)).resetMode()
-    // Paint the canvas slowly with fireball red/gold
-    .color(CHSV_RED, CHSV_YELLOW).speed(0.1).play(seconds(15))
-    // Erase quickly
-    .color(CHSV_RED, CHSV_YELLOW).eraser().speed(1).play(seconds(15))
-    // Paint a rainbow
-    .color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4).play(seconds(15));
-}
-*/
-
-/*
-void hourLoop() {
-  spirals();
-}
-*/
-
-/*
-void spirals2(int activeSubPattern) {
-  for (int density = 0; density <= 6; density++) {
-    spiral.withDensity(density).directionInward().play(2);
-  }
-  for (int density = 0; density <= 6; density++) {
-    spiral.withDensity(density).directionOutward().play(2);
-  }
-}
-
-void spirals() {
-  Spiral spiral;
-  for (int density = 0; density <= 6; density++) {
-    spiral.withDensity(density).directionInward().play(2);
-  }
-  for (int density = 0; density <= 6; density++) {
-    spiral.withDensity(density).directionOutward().play(2);
-  }
-}
-*/
