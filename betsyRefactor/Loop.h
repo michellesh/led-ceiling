@@ -39,7 +39,7 @@ struct Loop { // really HourLoop
       _patternTimer.reset();
     }
 
-    if (_subPatternTimer.complete()) {
+    if (_subPatternComplete()) {
       _setNextSubPattern();
       _subPatternTimer.reset();
     }
@@ -56,7 +56,17 @@ struct Loop { // really HourLoop
     return *this;
   }
 
+  bool _subPatternComplete() {
+    switch (_activePattern) {
+      case SPIRAL:
+        return _spiral.complete();
+      default:
+        return _subPatternTimer.complete();
+    }
+  }
+
   void _setNextPattern() {
+    allBlack();
     _activePattern = incrementPattern(_activePattern, 2);
     _nextSubPattern = 0;
     _setNextSubPattern();
@@ -71,6 +81,7 @@ struct Loop { // really HourLoop
                   ? _spiral.withDensity(_activeSubPattern % 6).directionInward().play()
                   : _spiral.withDensity(_activeSubPattern % 6).directionOutward().play();
         _nextSubPattern = incrementPattern(_activeSubPattern, 12);
+        break;
       case PAINTBRUSH:
         _paintbrush =
           _activeSubPattern == 0 ? _paintbrush.color(CHSV_BLUE, CHSV_BLUE) :
@@ -81,6 +92,9 @@ struct Loop { // really HourLoop
                                    _paintbrush.color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
         _paintbrush = _paintbrush.play();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        break;
+      default:
+        break;
     }
   }
 };
