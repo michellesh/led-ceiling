@@ -10,7 +10,7 @@ struct Spiral {
   CHSV _color1 = CHSV_BLUE;
   CHSV _color2 = CHSV_WHITE;
 
-  Spiral withDensity(int density) {
+  Spiral density(int density) {
     Spiral s = *this;
     s._density = density;
     return s;

@@ -20,6 +20,7 @@ uint8_t betsy_receiverAddress[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 #define SPIRAL      0
 #define PAINTBRUSH  1
+#define RIPPLE      2
 
 struct Button {
   int id;

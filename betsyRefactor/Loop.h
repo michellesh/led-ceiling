@@ -9,10 +9,11 @@ struct Loop { // really HourLoop
   int _activePattern = SPIRAL;
   int _activeSubPattern = 0;
   int _nextSubPattern = 0;
-  int _numPatterns = 2;
+  int _numPatterns = 3;
 
   Spiral _spiral;
   Paintbrush _paintbrush;
+  Ripple _ripple;
 
   Timer _patternTimer = {minutes(1)};
   Timer _subPatternTimer = {seconds(15)};
@@ -51,6 +52,9 @@ struct Loop { // really HourLoop
       case PAINTBRUSH:
         _paintbrush = _paintbrush.play();
         break;
+      case RIPPLE:
+        _ripple = _ripple.play();
+        break;
     }
 
     return *this;
@@ -60,6 +64,8 @@ struct Loop { // really HourLoop
     switch (_activePattern) {
       case SPIRAL:
         return _spiral.complete();
+      case RIPPLE:
+        return false; // no sub patterns yet
       default:
         return _subPatternTimer.complete();
     }
@@ -67,7 +73,7 @@ struct Loop { // really HourLoop
 
   void _setNextPattern() {
     allBlack();
-    _activePattern = incrementPattern(_activePattern, 2);
+    _activePattern = incrementPattern(_activePattern, _numPatterns);
     _nextSubPattern = 0;
     _setNextSubPattern();
     _subPatternTimer.reset();
@@ -78,8 +84,8 @@ struct Loop { // really HourLoop
     switch (_activePattern) {
       case SPIRAL:
         _spiral = _activeSubPattern < 6
-                  ? _spiral.withDensity(_activeSubPattern % 6).directionInward().play()
-                  : _spiral.withDensity(_activeSubPattern % 6).directionOutward().play();
+                  ? _spiral.density(_activeSubPattern % 6).directionInward().play()
+                  : _spiral.density(_activeSubPattern % 6).directionOutward().play();
         _nextSubPattern = incrementPattern(_activeSubPattern, 12);
         break;
       case PAINTBRUSH:
