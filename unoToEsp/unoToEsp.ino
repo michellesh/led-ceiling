@@ -25,14 +25,7 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String str = Serial.readStringUntil('\n');
-    Button button = parseButton(str);
-    Serial.print("button id: ");
-    Serial.println(button.id);
-    Serial.print("button value1: ");
-    Serial.println(button.value1);
-    Serial.print("button value2: ");
-    Serial.println(button.value2);
-    send(button);
+    send(parseButton(str));
   }
 }
 
