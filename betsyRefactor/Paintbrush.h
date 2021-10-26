@@ -2,58 +2,58 @@ int BRIGHTNESS_THRESHOLD_BACKGROUND = 5;
 int BRIGHTNESS_THRESHOLD_ERASER = 40;
 int BRIGHTNESS_THRESHOLD_RAINBOW = 20;
 
-int MODE_DEFAULT = 0;
-int MODE_ERASER = 1;
-int MODE_RAINBOW = 2;
+CHSV DEFAULT_COLOR = CHSV(HUE_BLUE, 255, 255);
+float DEFAULT_RADIUS = 2.5;
+float DEFAULT_SPEED = 0.5;
+int DEFAULT_MODE = 0;
+int ERASER_MODE = 1;
+int RAINBOW_MODE = 2;
 
 struct Paintbrush {
-  CHSV _color = CHSV(HUE_BLUE, 255, 255);  // color of the paintbrush
-  CHSV _borderColor = _color;              // color around edge of paintbrush
-
-  float _radius = 2.5;  // the width (size) of the paintbrush (in pixels)
-  float _speed = 0.5;   // [0.05 - 1] how fast the paintbrush moves across canvas
-  int _targetEdge = 2;  // index of target edge
-  int _mode = MODE_DEFAULT;
+  CHSV _color = DEFAULT_COLOR;        // color of the paintbrush
+  CHSV _borderColor = DEFAULT_COLOR;  // color around edge of paintbrush
+  float _radius = DEFAULT_RADIUS;     // the size of the paintbrush (in pixels)
+  float _speed = DEFAULT_SPEED;       // [0.05 - 1] how fast the paintbrush moves 
+  int _mode = DEFAULT_MODE;
+  int _targetEdge = 2;                // [0-5] index of target edge
 
   px _center = pointOnLine(EDGES[0].p1, EDGES[0].p2, 0.5);  // location of paintbrush
   px _target = pointOnLine(EDGES[_targetEdge].p1, EDGES[_targetEdge].p2, 0.1);
   px _start = _center;
 
   Paintbrush color(CHSV color, CHSV borderColor = CHSV_BLACK) {
-    Paintbrush p = *this;
-    p._color = color;
-    p._borderColor = borderColor == CHSV_BLACK ? color : borderColor;
-    return p;
+    _color = color;
+    _borderColor = borderColor == CHSV_BLACK ? color : borderColor;
+    return *this;
   }
 
   Paintbrush speed(float speed) {
-    Paintbrush p = *this;
-    p._speed = speed;
-    return p;
+    _speed = speed;
+    return *this;
   }
 
-  Paintbrush resetMode() {
-    Paintbrush p = *this;
-    p._mode = MODE_DEFAULT;
-    return p;
+  Paintbrush reset() {
+    _color = DEFAULT_COLOR;
+    _borderColor = DEFAULT_COLOR;
+    _radius = DEFAULT_RADIUS;
+    _speed = DEFAULT_SPEED;
+    _mode = DEFAULT_MODE;
+    return *this;
   }
 
   Paintbrush eraser() {
-    Paintbrush p = *this;
-    p._mode = MODE_ERASER;
-    return p;
+    _mode = ERASER_MODE;
+    return *this;
   }
 
   Paintbrush rainbow() {
-    Paintbrush p = *this;
-    p._mode = MODE_RAINBOW;
-    return p;
+    _mode = RAINBOW_MODE;
+    return *this;
   }
 
   Paintbrush radius(float radius) {
-    Paintbrush p = *this;
-    p._radius = radius;
-    return p;
+    _radius = radius;
+    return *this;
   }
 
   Paintbrush play() {
@@ -137,13 +137,13 @@ struct Paintbrush {
     }
 
     // Rainbow mode trails behind random color
-    if (_mode == MODE_RAINBOW && percent < BRIGHTNESS_THRESHOLD_RAINBOW) {
+    if (_mode == RAINBOW_MODE && percent < BRIGHTNESS_THRESHOLD_RAINBOW) {
       int index = random(0, 7);
       color = CHSV(RAINBOW[index].h, RAINBOW[index].s, color.v);
     }
 
     // Eraser mode sets lowest brightnesses to black
-    if (_mode == MODE_ERASER && percent < BRIGHTNESS_THRESHOLD_ERASER) {
+    if (_mode == ERASER_MODE && percent < BRIGHTNESS_THRESHOLD_ERASER) {
       color = CHSV_BLACK;
     }
     return color;

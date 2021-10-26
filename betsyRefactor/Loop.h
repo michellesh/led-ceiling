@@ -92,12 +92,12 @@ struct Loop { // really HourLoop
         break;
       case PAINTBRUSH:
         _paintbrush =
-          _activeSubPattern == 0 ? _paintbrush.resetMode().color(CHSV_BLUE, CHSV_BLUE) :
-          _activeSubPattern == 1 ? _paintbrush.color(CHSV_YELLOW, CHSV_YELLOW) :
-          _activeSubPattern == 2 ? _paintbrush.color(CHSV_GREEN).eraser() :
-          _activeSubPattern == 3 ? _paintbrush.color(CHSV_RED, CHSV_YELLOW).speed(0.1) :
-          _activeSubPattern == 4 ? _paintbrush.color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
-                                   _paintbrush.color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
+          _activeSubPattern == 0 ? _paintbrush.reset().color(CHSV_BLUE, CHSV_BLUE) :
+          _activeSubPattern == 1 ? _paintbrush.reset().color(CHSV_YELLOW, CHSV_YELLOW) :
+          _activeSubPattern == 2 ? _paintbrush.reset().color(CHSV_GREEN).eraser() :
+          _activeSubPattern == 3 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).speed(0.1) :
+          _activeSubPattern == 4 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
+                                   _paintbrush.reset().color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       case RIPPLE:
