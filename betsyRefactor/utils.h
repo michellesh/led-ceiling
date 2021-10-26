@@ -8,7 +8,7 @@
 #define RADIUS        16
 
 CRGB leds[NUM_ROWS][NUM_COLUMNS];
-CHSV ledsPrev[NUM_ROWS][NUM_COLUMNS];
+CHSV ledsCHSV[NUM_ROWS][NUM_COLUMNS];
 
 
 int leftBound[] = {7, 7, 6, 5, 5, 4, 4, 3, 3, 2, 1, 1, 0, 0,

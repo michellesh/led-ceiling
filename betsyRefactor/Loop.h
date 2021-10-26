@@ -13,7 +13,7 @@ struct Loop { // really HourLoop
 
   Spiral _spiral;
   Paintbrush _paintbrush;
-  Ripple _ripple;
+  Ripples _ripples;
 
   Timer _patternTimer = {minutes(1)};
   Timer _subPatternTimer = {seconds(15)};
@@ -53,7 +53,7 @@ struct Loop { // really HourLoop
         _paintbrush = _paintbrush.play();
         break;
       case RIPPLE:
-        _ripple = _ripple.play();
+        _ripples = _ripples.play();
         break;
     }
 
@@ -65,7 +65,7 @@ struct Loop { // really HourLoop
       case SPIRAL:
         return _spiral.complete();
       case RIPPLE:
-        return false; // no sub patterns yet
+        return _ripples.complete();
       default:
         return _subPatternTimer.complete();
     }
@@ -81,23 +81,31 @@ struct Loop { // really HourLoop
 
   void _setNextSubPattern() {
     _activeSubPattern = _nextSubPattern;
+    Serial.print("_activeSubPattern: ");
+    Serial.println(_activeSubPattern);
     switch (_activePattern) {
       case SPIRAL:
-        _spiral = _activeSubPattern < 6
-                  ? _spiral.density(_activeSubPattern % 6).directionInward().play()
-                  : _spiral.density(_activeSubPattern % 6).directionOutward().play();
+        _spiral =
+          _activeSubPattern < 6 ? _spiral.density(_activeSubPattern % 6).directionInward() :
+                                  _spiral.density(_activeSubPattern % 6).directionOutward();
         _nextSubPattern = incrementPattern(_activeSubPattern, 12);
         break;
       case PAINTBRUSH:
         _paintbrush =
-          _activeSubPattern == 0 ? _paintbrush.color(CHSV_BLUE, CHSV_BLUE) :
+          _activeSubPattern == 0 ? _paintbrush.resetMode().color(CHSV_BLUE, CHSV_BLUE) :
           _activeSubPattern == 1 ? _paintbrush.color(CHSV_YELLOW, CHSV_YELLOW) :
           _activeSubPattern == 2 ? _paintbrush.color(CHSV_GREEN).eraser() :
           _activeSubPattern == 3 ? _paintbrush.color(CHSV_RED, CHSV_YELLOW).speed(0.1) :
           _activeSubPattern == 4 ? _paintbrush.color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
                                    _paintbrush.color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
-        _paintbrush = _paintbrush.play();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        break;
+      case RIPPLE:
+        _ripples =
+          _activeSubPattern == 0 ? _ripples.reset().randomColors().randomCenters().width(5) :
+          _activeSubPattern == 1 ? _ripples.reset().randomColors().randomCenters().width(5) :
+                                   _ripples.reset().randomColors().randomCenters().width(5);
+        _nextSubPattern = incrementPattern(_activeSubPattern, 3);
         break;
       default:
         break;

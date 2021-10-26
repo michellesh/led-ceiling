@@ -132,8 +132,8 @@ struct Paintbrush {
 
     // Blend dim pixels those with the previous background color
     if (percent < BRIGHTNESS_THRESHOLD_BACKGROUND) {
-      color = blendCHSV(ledsPrev[p.rowInt()][p.colInt()], color);
-      ledsPrev[p.rowInt()][p.colInt()] = color;
+      color = blendCHSV(ledsCHSV[p.rowInt()][p.colInt()], color);
+      ledsCHSV[p.rowInt()][p.colInt()] = color;
     }
 
     // Rainbow mode trails behind random color
