@@ -4,7 +4,7 @@
 struct Ripple {
   float _width = 5;               // Thickness of ripple
   float _radius = (_width * -2);  // How big the ripple is. starts at 0
-  float _speed = 0;
+  float _speed = RIPPLE_SPEED;
   CHSV _color = CHSV_BLUE;        // Color of the ripple
   px _center = ORIGIN;            // Point where the ripple starts
   CHSV prev[NUM_ROWS][NUM_COLUMNS];
@@ -29,17 +29,11 @@ struct Ripple {
     return *this;
   }
 
-  Ripple start() {
-    _speed = RIPPLE_SPEED;
-    return *this;
-  }
-
-  bool started() {
-    return _speed != 0;
-  }
-
   float maxRadius() {
-    return RADIUS * 2 + _width;
+    return max(
+      max(_center.row, NUM_ROWS - _center.row),
+      max(_center.col, NUM_COLUMNS - _center.col)
+    ) + _width;
   }
 
   bool complete() {
@@ -123,11 +117,6 @@ struct Ripples {
   }
 
   Ripples play() {
-    if (!_ripples[0].started()) {
-      for (int r = 0; r < _numRipples; r++) {
-        _ripples[r] = _ripples[r].start();
-      }
-    }
     _showRipples();
     return *this;
   }
@@ -143,9 +132,7 @@ struct Ripples {
 
   void _showRipples() {
     for (int r = 0; r < _numRipples; r++) {
-      if (_ripples[r].started() && !_ripples[r].complete()) {
-        _ripples[r] = _ripples[r].show().updateRadius();
-      }
+      _ripples[r] = _ripples[r].show().updateRadius();
     }
     FastLED.show();
   }

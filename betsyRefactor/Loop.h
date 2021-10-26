@@ -102,8 +102,8 @@ struct Loop { // really HourLoop
         break;
       case RIPPLE:
         _ripples =
-          _activeSubPattern == 0 ? _ripples.reset().randomColors().randomCenters().width(5) :
-          _activeSubPattern == 1 ? _ripples.reset().randomColors().randomCenters().width(5) :
+          _activeSubPattern == 0 ? _ripples.reset().randomColors().centered().width(5) :
+          _activeSubPattern == 1 ? _ripples.reset().randomColors().centered().width(10) :
                                    _ripples.reset().randomColors().randomCenters().width(5);
         _nextSubPattern = incrementPattern(_activeSubPattern, 3);
         break;
