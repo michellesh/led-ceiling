@@ -14,8 +14,8 @@ struct Ripple {
     return *this;
   }
 
-  Ripple reset() {
-    _radius = _width * -2;
+  Ripple reset(int delay) {
+    _radius = _width * -2 * delay;
     return *this;
   }
 
@@ -26,6 +26,28 @@ struct Ripple {
 
   Ripple center(px center) {
     _center = center;
+    return *this;
+  }
+
+  Ripple start() {
+    _speed = RIPPLE_SPEED;
+    return *this;
+  }
+
+  bool started() {
+    return _speed != 0;
+  }
+
+  float maxRadius() {
+    return RADIUS * 2 + _width;
+  }
+
+  bool complete() {
+    return _radius >= maxRadius();
+  }
+
+  Ripple updateRadius() {
+    _radius = _radius < maxRadius() ? _radius + _speed : maxRadius();
     return *this;
   }
 
@@ -50,24 +72,6 @@ struct Ripple {
     return *this;
   }
 
-  Ripple start() {
-    _speed = RIPPLE_SPEED;
-    return *this;
-  }
-
-  bool started() {
-    return _speed != 0;
-  }
-
-  bool complete() {
-    return _radius == (RADIUS + _width * 2);
-  }
-
-  Ripple updateRadius() {
-    _radius = _radius < (RADIUS + _width * 2) ? _radius + _speed : RADIUS + _width * 2;
-    return *this;
-  }
-
   CHSV _getColor(float distFromCenter) {
     // Find out how close this pixel is to the current radius
     float distFromRadius = abs(_radius - distFromCenter);
@@ -85,7 +89,7 @@ struct Ripples {
 
   Ripples reset() {
     for (int r = 0; r < _numRipples; r++) {
-      _ripples[r] = _ripples[r].reset();
+      _ripples[r] = _ripples[r].reset(r + 1);
     }
     return *this;
   }
