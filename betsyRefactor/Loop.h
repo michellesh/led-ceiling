@@ -94,7 +94,7 @@ struct Loop { // really HourLoop
         _paintbrush =
           _activeSubPattern == 0 ? _paintbrush.reset().color(CHSV_BLUE, CHSV_BLUE) :
           _activeSubPattern == 1 ? _paintbrush.reset().color(CHSV_YELLOW, CHSV_YELLOW) :
-          _activeSubPattern == 2 ? _paintbrush.reset().color(CHSV_GREEN).eraser() :
+          _activeSubPattern == 2 ? _paintbrush.reset().color(CHSV_GREEN, CHSV_GREEN).eraser() :
           _activeSubPattern == 3 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).speed(0.1) :
           _activeSubPattern == 4 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
                                    _paintbrush.reset().color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
@@ -104,8 +104,11 @@ struct Loop { // really HourLoop
         _ripples =
           _activeSubPattern == 0 ? _ripples.reset().randomColors().centered().width(5) :
           _activeSubPattern == 1 ? _ripples.reset().randomColors().centered().width(10) :
-                                   _ripples.reset().randomColors().randomCenters().width(5);
-        _nextSubPattern = incrementPattern(_activeSubPattern, 3);
+          _activeSubPattern == 2 ? _ripples.reset().randomColors().centered().width(20) :
+          _activeSubPattern == 3 ? _ripples.reset().randomColors().randomCenters().width(5) :
+          _activeSubPattern == 4 ? _ripples.reset().randomColors().randomCenters().randomWidths() :
+                                   _ripples.reset().randomColors().randomCenters().randomWidths();
+        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       default:
         break;

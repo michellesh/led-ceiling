@@ -102,6 +102,13 @@ struct Ripples {
     return *this;
   }
 
+  Ripples randomWidths() {
+    for (int r = 0; r < _numRipples; r++) {
+      _ripples[r] = _ripples[r].width(random(3, 15));
+    }
+    return *this;
+  }
+
   Ripples randomColors() {
     for (int r = 0; r < _numRipples; r++) {
       _ripples[r] = _ripples[r].color(CHSV(random(0, 255), 255, 255));
