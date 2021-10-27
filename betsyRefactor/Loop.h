@@ -85,33 +85,65 @@ struct Loop { // really HourLoop
     Serial.println(_activeSubPattern);
     switch (_activePattern) {
       case SPIRAL:
-        _spiral =
-          _activeSubPattern < 6 ? _spiral.density(_activeSubPattern % 6).directionInward() :
-                                  _spiral.density(_activeSubPattern % 6).directionOutward();
+        _spiral = getSpiral();
         _nextSubPattern = incrementPattern(_activeSubPattern, 12);
         break;
       case PAINTBRUSH:
-        _paintbrush =
-          _activeSubPattern == 0 ? _paintbrush.reset().color(CHSV_BLUE, CHSV_BLUE) :
-          _activeSubPattern == 1 ? _paintbrush.reset().color(CHSV_YELLOW, CHSV_YELLOW) :
-          _activeSubPattern == 2 ? _paintbrush.reset().color(CHSV_GREEN, CHSV_GREEN).eraser() :
-          _activeSubPattern == 3 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).speed(0.1) :
-          _activeSubPattern == 4 ? _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).eraser().speed(1) :
-                                   _paintbrush.reset().color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
+        _paintbrush = getPaintbrush();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       case RIPPLE:
-        _ripples =
-          _activeSubPattern == 0 ? _ripples.reset().randomColors().centered().width(5) :
-          _activeSubPattern == 1 ? _ripples.reset().randomColors().centered().width(10) :
-          _activeSubPattern == 2 ? _ripples.reset().randomColors().centered().width(20) :
-          _activeSubPattern == 3 ? _ripples.reset().randomColors().randomCenters().width(5) :
-          _activeSubPattern == 4 ? _ripples.reset().randomColors().randomCenters().randomWidths() :
-                                   _ripples.reset().randomColors().randomCenters().randomWidths();
+        _ripples = getRipples();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       default:
         break;
+    }
+  }
+
+  Spiral getSpiral() {
+    if (_activeSubPattern < 6) {
+      return _spiral.density(_activeSubPattern % 6).directionInward();
+    } else {
+      return _spiral.density(_activeSubPattern % 6).directionOutward();
+    }
+  }
+
+  Paintbrush getPaintbrush() {
+    switch (_activeSubPattern) {
+      case 0:
+        return _paintbrush.reset().color(CHSV_BLUE, CHSV_BLUE);
+      case 1:
+        return _paintbrush.reset().color(CHSV_YELLOW, CHSV_YELLOW);
+      case 2:
+        return _paintbrush.reset().color(CHSV_GREEN, CHSV_GREEN).eraser();
+      case 3:
+        return _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).speed(0.1);
+      case 4:
+        return _paintbrush.reset().color(CHSV_RED, CHSV_YELLOW).eraser().speed(1);
+      case 5:
+        return _paintbrush.reset().color(CHSV_RED, CHSV_PURPLE).rainbow().radius(4);
+      default:
+        return _paintbrush;
+    }
+  }
+
+  Ripples getRipples() {
+    switch (_activeSubPattern) {
+      case 0:
+        return _ripples.reset().randomColors().centered().width(5);
+      case 1:
+        return _ripples.reset().randomColors().centered().width(10);
+      case 2:
+        return _ripples.reset().randomColors().centered().width(20);
+      case 3:
+        return _ripples.reset().randomColors().randomCenters().width(5);
+      case 4:
+        return _ripples.reset().randomColors().randomCenters().randomWidths();
+      case 5:
+        return _ripples.reset().randomColors().randomCenters().randomWidths();
+      default:
+        return _ripples;
     }
   }
 };
