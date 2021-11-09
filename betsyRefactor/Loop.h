@@ -9,11 +9,12 @@ struct Loop { // really HourLoop
   int _activePattern = SPIRAL;
   int _activeSubPattern = 0;
   int _nextSubPattern = 0;
-  int _numPatterns = 3;
+  int _numPatterns = 4;
 
   Spiral _spiral;
   Paintbrush _paintbrush;
   Ripples _ripples;
+  Water _water;
 
   Timer _patternTimer = {minutes(1)};
   Timer _subPatternTimer = {seconds(15)};
@@ -54,6 +55,9 @@ struct Loop { // really HourLoop
         break;
       case RIPPLE:
         _ripples = _ripples.play();
+        break;
+      case WATER:
+        _water = _water.play();
         break;
     }
 
@@ -96,6 +100,9 @@ struct Loop { // really HourLoop
         _ripples = getRipples();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
+      case WATER:
+        _nextSubPattern = 0; // no sub patterns for water pattern
+        break;
       default:
         break;
     }
@@ -129,17 +136,17 @@ struct Loop { // really HourLoop
   Ripples getRipples() {
     switch (_activeSubPattern) {
       case 0:
-        return _ripples.randomColors().centered().width(5).reset();
+        return _ripples.randomColors().centered().width(5).init();
       case 1:
-        return _ripples.randomColors().centered().width(10).reset();
+        return _ripples.randomColors().centered().width(10).init();
       case 2:
-        return _ripples.randomColors().centered().width(20).reset();
+        return _ripples.randomColors().centered().width(20).init();
       case 3:
-        return _ripples.randomColors().randomCenters().width(5).reset();
+        return _ripples.randomColors().randomCenters().width(5).init();
       case 4:
-        return _ripples.randomColors().randomCenters().randomWidths().reset();
+        return _ripples.randomColors().randomCenters().randomWidths().init();
       case 5:
-        return _ripples.randomColors().randomCenters().randomWidths().reset();
+        return _ripples.randomColors().randomCenters().randomWidths().init();
       default:
         return _ripples;
     }

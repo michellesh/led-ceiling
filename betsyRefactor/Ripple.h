@@ -14,7 +14,7 @@ struct Ripple {
     return *this;
   }
 
-  Ripple reset(int delay) {
+  Ripple init(int delay) {
     _radius = _width * -2;  // Buffer so the initial width of the ripple is 0
     _radius -= (_width * delay);  // Add even more buffer for delay
     return *this;
@@ -87,9 +87,9 @@ struct Ripples {
   int _numRipples = MAX_RIPPLES;
   Ripple _ripples[MAX_RIPPLES];
 
-  Ripples reset() {
+  Ripples init() {
     for (int r = 0; r < _numRipples; r++) {
-      _ripples[r] = _ripples[r].reset(r);
+      _ripples[r] = _ripples[r].init(r);
     }
     return *this;
   }

@@ -9,6 +9,7 @@
 #include "Spiral.h"
 #include "Paintbrush.h"
 #include "Ripple.h"
+#include "Water.h"
 #include "BetsyShared.h"
 #include "Loop.h"
 
