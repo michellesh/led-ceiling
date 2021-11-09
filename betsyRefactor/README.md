@@ -1,11 +1,11 @@
 ### Wiring
 
-ESP1 powered by a battern pack via microUSB cable
+UNO powered by a battery pack & USB cable
 
  N64 | UNO  | ESP1
 -----+------+------
  GND | GND  | GND
- VCC | 3.3V |
+ VCC | 3.3V | Vin
    D | 2    |
      | ~5   | TX
      | ~6   | RX
@@ -16,3 +16,13 @@ ESP1 powered by a battern pack via microUSB cable
    TX | 19
   Vin | 3.3V
   GND | GND
+
+
+N64
+```
+ /       \
+ \_o_o_o_/
+
+   ^ ^ ^
+   G D V
+```
