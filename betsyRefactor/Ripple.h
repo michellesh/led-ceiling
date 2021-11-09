@@ -2,12 +2,12 @@
 #define RIPPLE_SPEED  0.5
 
 struct Ripple {
-  float _width = 5;               // Thickness of ripple
-  float _radius = (_width * -2);  // How big the ripple is. starts at 0
+  float _width = 5;                 // Thickness of ripple
+  float _radius = (_width * -2);    // How big the ripple is. starts at 0
   float _speed = RIPPLE_SPEED;
-  CHSV _color = CHSV_BLUE;        // Color of the ripple
-  px _center = ORIGIN;            // Point where the ripple starts
-  CHSV prev[NUM_ROWS][NUM_COLUMNS];
+  CHSV _color = CHSV_BLUE;          // Color of the ripple
+  px _center = ORIGIN;              // Point where the ripple starts
+  CHSV prev[NUM_ROWS][NUM_COLUMNS]; // The previous state of this ripple
 
   Ripple width(float width) {
     _width = width;
@@ -15,7 +15,8 @@ struct Ripple {
   }
 
   Ripple reset(int delay) {
-    _radius = _width * -2 * delay;
+    _radius = _width * -2;  // Buffer so the initial width of the ripple is 0
+    _radius -= (_width * delay);  // Add even more buffer for delay
     return *this;
   }
 
@@ -49,14 +50,11 @@ struct Ripple {
     for (int row = 0; row < NUM_ROWS; row++) {
       for (int col = 0; col < NUM_COLUMNS; col++) {
         px p = {row, col};
-        float distFromCenter = distance(p, _center);
         if (p.inBounds()) {
+          float distFromCenter = distance(p, _center);
           CHSV color = _getColor(distFromCenter);
-          CHSV prevColor = prev[p.rowInt()][p.colInt()];
-          CHSV prevLED = ledsCHSV[p.rowInt()][p.colInt()];
-          // If the previous LED is brighter because of a different ripple,
-          // show that one instead
-          color = (prevLED.v > color.v && prevLED != prevColor) ? prevLED : color;
+          color = _getBrighter(p, color);
+
           leds[p.rowInt()][p.colInt()] = color;
           ledsCHSV[p.rowInt()][p.colInt()] = color;
           prev[p.rowInt()][p.colInt()] = color;
@@ -64,6 +62,14 @@ struct Ripple {
       }
     }
     return *this;
+  }
+
+  CHSV _getBrighter(px p, CHSV color) {
+    // If the previous LED is brighter because of a different ripple,
+    // show that one instead
+    CHSV prevColor = prev[p.rowInt()][p.colInt()];
+    CHSV led = ledsCHSV[p.rowInt()][p.colInt()];
+    return (led.v > color.v && led != prevColor) ? led : color;
   }
 
   CHSV _getColor(float distFromCenter) {
@@ -78,12 +84,12 @@ struct Ripple {
 };
 
 struct Ripples {
-  int _numRipples = 2;
+  int _numRipples = MAX_RIPPLES;
   Ripple _ripples[MAX_RIPPLES];
 
   Ripples reset() {
     for (int r = 0; r < _numRipples; r++) {
-      _ripples[r] = _ripples[r].reset(r + 1);
+      _ripples[r] = _ripples[r].reset(r);
     }
     return *this;
   }

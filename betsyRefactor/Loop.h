@@ -102,11 +102,9 @@ struct Loop { // really HourLoop
   }
 
   Spiral getSpiral() {
-    if (_activeSubPattern < 6) {
-      return _spiral.density(_activeSubPattern % 6).directionInward();
-    } else {
-      return _spiral.density(_activeSubPattern % 6).directionOutward();
-    }
+    return _activeSubPattern < 6
+      ? _spiral.density(_activeSubPattern % 6).directionInward()
+      : _spiral.density(_activeSubPattern % 6).directionOutward();
   }
 
   Paintbrush getPaintbrush() {
@@ -131,17 +129,17 @@ struct Loop { // really HourLoop
   Ripples getRipples() {
     switch (_activeSubPattern) {
       case 0:
-        return _ripples.reset().randomColors().centered().width(5);
+        return _ripples.randomColors().centered().width(5).reset();
       case 1:
-        return _ripples.reset().randomColors().centered().width(10);
+        return _ripples.randomColors().centered().width(10).reset();
       case 2:
-        return _ripples.reset().randomColors().centered().width(20);
+        return _ripples.randomColors().centered().width(20).reset();
       case 3:
-        return _ripples.reset().randomColors().randomCenters().width(5);
+        return _ripples.randomColors().randomCenters().width(5).reset();
       case 4:
-        return _ripples.reset().randomColors().randomCenters().randomWidths();
+        return _ripples.randomColors().randomCenters().randomWidths().reset();
       case 5:
-        return _ripples.reset().randomColors().randomCenters().randomWidths();
+        return _ripples.randomColors().randomCenters().randomWidths().reset();
       default:
         return _ripples;
     }
