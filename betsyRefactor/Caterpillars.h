@@ -1,7 +1,7 @@
-int MIN_WIDTH = 1;
-int DEFAULT_MAX_WIDTH = 4;
-float MIN_SPEED = 0.2;  // pixels per loop
-float MAX_SPEED = 1.2;  // pixels per loop
+int MIN_WIDTH = 2;
+int DEFAULT_MAX_WIDTH = 5;
+float MIN_SPEED = 0.1;
+float MAX_SPEED = 0.9;
 
 struct Caterpillar {
   int _maxWidth = DEFAULT_MAX_WIDTH;
