@@ -6,9 +6,9 @@ int incrementPattern(int activePattern, int numPatterns) {
 }
 
 
-struct Loop { // really HourLoop
+struct Loop {
   int _numPatterns = 5;
-  int _patterns[5] = {SPIRAL, PAINTBRUSH, WATER, RIPPLE, CATERPILLARS};
+  int _patterns[5] = {SPIRAL, PAINTBRUSH, RIPPLE, WATER, CATERPILLARS};
   int _activePatternIndex = 0;
   int _activePattern = _patterns[_activePatternIndex];
   int _activeSubPattern = 0;
@@ -105,16 +105,25 @@ struct Loop { // really HourLoop
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       case RIPPLE:
-        _ripples = getRipples();
+        if (_activeSubPattern == 0) {
+          _ripples = _ripples.randomColors().centered().width(5).init();
+        } else if (_activeSubPattern == 1) {
+          _ripples = _ripples.randomColors().centered().width(10).init();
+        } else if (_activeSubPattern == 2) {
+          _ripples = _ripples.randomColors().centered().width(20).init();
+        } else if (_activeSubPattern == 3) {
+          _ripples = _ripples.randomColors().randomCenters().width(5).init();
+        } else {
+          _ripples = _ripples.randomColors().randomCenters().randomWidths().init();
+        }
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       case WATER:
         _water = getWater();
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
-        //_nextSubPattern = 0; // no sub patterns for water pattern
         break;
       case CATERPILLARS:
-        _caterpillars = _caterpillars.maxWidth(_activeSubPattern).reset();
+        _caterpillars = getCaterpillars();
         _nextSubPattern = incrementPattern(_activeSubPattern, 20);
         break;
       default:
@@ -147,23 +156,8 @@ struct Loop { // really HourLoop
     }
   }
 
-  Ripples getRipples() {
-    switch (_activeSubPattern) {
-      case 0:
-        return _ripples.randomColors().centered().width(5).init();
-      case 1:
-        return _ripples.randomColors().centered().width(10).init();
-      case 2:
-        return _ripples.randomColors().centered().width(20).init();
-      case 3:
-        return _ripples.randomColors().randomCenters().width(5).init();
-      case 4:
-        return _ripples.randomColors().randomCenters().randomWidths().init();
-      case 5:
-        return _ripples.randomColors().randomCenters().randomWidths().init();
-      default:
-        return _ripples;
-    }
+  Caterpillars getCaterpillars() {
+    return _caterpillars.maxWidth(_activeSubPattern).reset();
   }
 
   Water getWater() {
