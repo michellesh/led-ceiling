@@ -9,12 +9,13 @@ struct Loop { // really HourLoop
   int _activePattern = SPIRAL;
   int _activeSubPattern = 0;
   int _nextSubPattern = 0;
-  int _numPatterns = 4;
+  int _numPatterns = 5;
 
   Spiral _spiral;
   Paintbrush _paintbrush;
   Ripples _ripples;
   Water _water;
+  Caterpillars _caterpillars;
 
   Timer _patternTimer = {minutes(1)};
   Timer _subPatternTimer = {seconds(15)};
@@ -59,6 +60,9 @@ struct Loop { // really HourLoop
       case WATER:
         _water = _water.play();
         break;
+      case CATERPILLARS:
+        _caterpillars = _caterpillars.play();
+        break;
     }
 
     return *this;
@@ -102,6 +106,10 @@ struct Loop { // really HourLoop
         break;
       case WATER:
         _nextSubPattern = 0; // no sub patterns for water pattern
+        break;
+      case CATERPILLARS:
+        _caterpillars = _caterpillars.maxWidth(_activeSubPattern).reset();
+        _nextSubPattern = incrementPattern(_activeSubPattern, 20);
         break;
       default:
         break;

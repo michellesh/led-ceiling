@@ -10,6 +10,7 @@
 #include "Paintbrush.h"
 #include "Ripple.h"
 #include "Water.h"
+#include "Caterpillars.h"
 #include "BetsyShared.h"
 #include "Loop.h"
 
