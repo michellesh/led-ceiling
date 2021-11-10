@@ -5,11 +5,14 @@ int incrementPattern(int activePattern, int numPatterns) {
   return 0;
 }
 
+
 struct Loop { // really HourLoop
-  int _activePattern = SPIRAL;
+  int _numPatterns = 5;
+  int _patterns[5] = {SPIRAL, PAINTBRUSH, WATER, RIPPLE, CATERPILLARS};
+  int _activePatternIndex = 0;
+  int _activePattern = _patterns[_activePatternIndex];
   int _activeSubPattern = 0;
   int _nextSubPattern = 0;
-  int _numPatterns = 5;
 
   Spiral _spiral;
   Paintbrush _paintbrush;
@@ -81,7 +84,8 @@ struct Loop { // really HourLoop
 
   void _setNextPattern() {
     allBlack();
-    _activePattern = incrementPattern(_activePattern, _numPatterns);
+    _activePatternIndex = incrementPattern(_activePatternIndex, _numPatterns);
+    _activePattern = _patterns[_activePatternIndex];
     _nextSubPattern = 0;
     _setNextSubPattern();
     _subPatternTimer.reset();
@@ -105,7 +109,9 @@ struct Loop { // really HourLoop
         _nextSubPattern = incrementPattern(_activeSubPattern, 6);
         break;
       case WATER:
-        _nextSubPattern = 0; // no sub patterns for water pattern
+        _water = getWater();
+        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        //_nextSubPattern = 0; // no sub patterns for water pattern
         break;
       case CATERPILLARS:
         _caterpillars = _caterpillars.maxWidth(_activeSubPattern).reset();
@@ -158,5 +164,9 @@ struct Loop { // really HourLoop
       default:
         return _ripples;
     }
+  }
+
+  Water getWater() {
+    return _activeSubPattern == 0 ? _water.reset() : _water;
   }
 };

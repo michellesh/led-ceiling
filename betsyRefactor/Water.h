@@ -8,6 +8,8 @@ double NUM_COLORS = 200; // the number of shades of blue
 double TSTEP = .0015;
 
 struct Water {
+  int _test = 0;
+  //double _initPosition[NUM_ROWS][NUM_COLUMNS];
   double _position[NUM_ROWS][NUM_COLUMNS];
   double _velocity[NUM_ROWS][NUM_COLUMNS];
 
@@ -16,8 +18,19 @@ struct Water {
       for (int col = 0; col < NUM_COLUMNS; col++) {
         _position[row][col] = mapf(random(0, 100), 0, 100, MIN_POSITION, MAX_POSITION);
         _velocity[row][col] = 0;
+        //_initPosition[row][col] = _position[row][col];
       }
     }
+  }
+
+  Water reset() {
+    for (int row = 0; row < NUM_ROWS; row++) {
+      for (int col = 0; col < NUM_COLUMNS; col++) {
+        _position[row][col] = mapf(random(0, 100), 0, 100, MIN_POSITION, MAX_POSITION);
+        _velocity[row][col] = 0;
+      }
+    }
+    return *this;
   }
 
   Water play() {
