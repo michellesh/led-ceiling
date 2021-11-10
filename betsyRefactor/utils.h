@@ -134,4 +134,8 @@ float mapf(float value, float inMin, float inMax, float outMin, float outMax) {
   return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
+int rollingInc(int current, int max) {
+  return current < (max - 1) ? current + 1 : 0;
+}
+
 #endif

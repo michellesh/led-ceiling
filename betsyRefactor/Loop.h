@@ -1,10 +1,5 @@
-int incrementPattern(int activePattern, int numPatterns) {
-  if (activePattern < (numPatterns - 1)) {
-    return activePattern + 1;
-  }
-  return 0;
-}
-
+int MINUTES_PER_PATTERN = 3;
+int SECONDS_PER_SUBPATTERN = 45;
 
 struct Loop {
   int _numPatterns = 5;
@@ -20,8 +15,8 @@ struct Loop {
   Water _water;
   Caterpillars _caterpillars;
 
-  Timer _patternTimer = {minutes(1)};
-  Timer _subPatternTimer = {seconds(15)};
+  Timer _patternTimer = {minutes(MINUTES_PER_PATTERN)};
+  Timer _subPatternTimer = {seconds(SECONDS_PER_SUBPATTERN)};
 
   Loop start() {
     _setNextSubPattern();
@@ -84,7 +79,7 @@ struct Loop {
 
   void _setNextPattern() {
     allBlack();
-    _activePatternIndex = incrementPattern(_activePatternIndex, _numPatterns);
+    _activePatternIndex = rollingInc(_activePatternIndex, _numPatterns);
     _activePattern = _patterns[_activePatternIndex];
     _nextSubPattern = 0;
     _setNextSubPattern();
@@ -98,11 +93,11 @@ struct Loop {
     switch (_activePattern) {
       case SPIRAL:
         _spiral = getSpiral();
-        _nextSubPattern = incrementPattern(_activeSubPattern, 12);
+        _nextSubPattern = rollingInc(_activeSubPattern, 12);
         break;
       case PAINTBRUSH:
         _paintbrush = getPaintbrush();
-        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        _nextSubPattern = rollingInc(_activeSubPattern, 6);
         break;
       case RIPPLE:
         if (_activeSubPattern == 0) {
@@ -116,15 +111,15 @@ struct Loop {
         } else {
           _ripples = _ripples.randomColors().randomCenters().randomWidths().init();
         }
-        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        _nextSubPattern = rollingInc(_activeSubPattern, 6);
         break;
       case WATER:
         _water = getWater();
-        _nextSubPattern = incrementPattern(_activeSubPattern, 6);
+        _nextSubPattern = rollingInc(_activeSubPattern, 6);
         break;
       case CATERPILLARS:
         _caterpillars = getCaterpillars();
-        _nextSubPattern = incrementPattern(_activeSubPattern, 20);
+        _nextSubPattern = rollingInc(_activeSubPattern, 20);
         break;
       default:
         break;
